@@ -84,5 +84,4 @@ class SparkRunner(SqlRunner):
     def _verify_target_dataset(self, target_dataset):
         for (table, dataset) in target_dataset:
             result_df = self._spark.sql(f'SELECT * FROM {table}').toPandas()
-            assert_frame_equal(result_df, dataset, sort_keys=['subject'])
-            # np.array_equal(result_df.values, dataset.values)
+            assert_frame_equal(result_df, dataset, sort_keys=dataset.columns.values.tolist())
