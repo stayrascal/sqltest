@@ -40,46 +40,22 @@ def define_structure(string, format_type):
 
 
 class SparkRunner(SqlRunner):
-    def __init__(self, spark: SparkSession):
+    def __init__(self, spark: SparkSession, env_variables: dict):
+        super().__init__(env_variables)
         self._spark = spark
 
-    def _run(self, source_dataset: List[Tuple[str, pd.DataFrame]], target_dataset: List[Tuple[str, pd.DataFrame]]):
+    def _run(self, source_dataset: List[Tuple[str, pd.DataFrame]], target_dataset: List[Tuple[str, pd.DataFrame]],
+             statements: List[str]):
         self._register_temp_view(source_dataset)
-        self._execute_sql()
+        self._execute_sql(statements)
         self._verify_target_dataset(target_dataset)
 
     def _register_temp_view(self, datasets: List[Tuple[str, pd.DataFrame]]):
         [pandas_to_spark(dataset, self._spark).createOrReplaceTempView(table) for (table, dataset) in datasets]
 
-    def _execute_sql(self):
-        self._spark.sql("DROP TABLE IF EXISTS top_1_student_by_subject")
-        ddl = """
-        CREATE TABLE IF NOT EXISTS top_1_student_by_subject
-        (
-            subject STRING,
-            student_id STRING,
-            student_gender STRING,
-            student_age INT,
-            score INT
-        ) USING PARQUET
-        """
-        dml = """
-        INSERT OVERWRITE TABLE top_1_student_by_subject
-        SELECT  temp.subject,
-                temp.student_id,
-                s.gender as student_gender,
-                s.age as student_age,
-                temp.score
-        FROM students s JOIN
-        (SELECT  student_id, 
-                    subject, 
-                    score,
-                    dense_rank() OVER (PARTITION BY subject ORDER BY score DESC) as rank 
-            FROM subject_scores) temp ON s.id = temp.student_id
-        WHERE temp.rank = 1
-        """
-        self._spark.sql(ddl)
-        self._spark.sql(dml)
+    def _execute_sql(self, statements: List[str]):
+        for stat in statements:
+            self._spark.sql(stat)
 
     def _verify_target_dataset(self, target_dataset):
         for (table, dataset) in target_dataset:

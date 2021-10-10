@@ -1,7 +1,6 @@
 from typing import List
 
-from sql.parser.strategy import ExecutionEnvironment, ExtractConstantStrategy, ExtractSQLStrategy, \
-    VerifyVariableStrategy
+from sql.parser.strategy import ExecutionEnvironment, ParseStrategy
 
 COMMENT_PREFIX = '--'
 MASK = "--.*$"''
@@ -23,7 +22,7 @@ def normalize(buffer: List[str]):
 class SqlFileReader(object):
 
     @staticmethod
-    def read_sql_statements(path: str) -> List[str]:
+    def _read_sql_statements(path: str) -> List[str]:
         with open(path) as file:
             lines = file.readlines()
             buffer = []
@@ -39,31 +38,11 @@ class SqlFileReader(object):
             if len(buffer):
                 yield normalize(buffer)
 
-    @staticmethod
-    def compile_sql_statements(statements: List[str]) -> List[str]:
-        strategies = [ExtractSQLStrategy(), ExtractConstantStrategy(), VerifyVariableStrategy()]
-
-        environments = {
-            'env': 'dev',
-            'data_date': '2021-10-01',
-            'target_path_data_platform': '/Users/wuzhiping/workspace/tools/sql-tester/data'
-        }
-
+    def compile_sql_file(self, path: str, env: ExecutionEnvironment, strategies: List[ParseStrategy]) -> List[str]:
+        statements = self._read_sql_statements(path)
         for statement in statements:
             for strategy in strategies:
                 if strategy.match(statement):
-                    operation = strategy.convert(statement, ExecutionEnvironment(environments))
+                    operation = strategy.convert(statement, env)
                     if operation.executable():
                         yield operation.as_summary_str()
-
-
-if __name__ == '__main__':
-    statements = SqlFileReader.read_sql_statements(
-        '/Users/wuzhiping/Desktop/Temasek/data-glue-applications/glue/job/sessionm/dwb/sql/t_fact_user_basic_point_earn_transaction.sql')
-
-    sqls = SqlFileReader.compile_sql_statements(statements)
-    cnt = 1
-    for sql in sqls:
-        print(cnt)
-        print(sql)
-        cnt = cnt + 1
