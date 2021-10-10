@@ -2,8 +2,8 @@ from abc import ABC
 import re
 from typing import List
 
-from sql.parser.exceptions import VariableNotFound
-from sql.parser.operation import NothingOperation, Operation, RunnableOperation
+from sqltest.parser.exceptions import VariableNotFound
+from sqltest.parser.operation import NothingOperation, Operation, RunnableOperation
 
 
 class ExecutionEnvironment(object):

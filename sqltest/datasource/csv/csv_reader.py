@@ -4,7 +4,7 @@ from typing import List, Tuple
 
 import pandas as pd
 
-from sql.datasource.reader import DatasetReader
+from sqltest.datasource.reader import DatasetReader
 
 
 class CsvDatasetReader(DatasetReader):

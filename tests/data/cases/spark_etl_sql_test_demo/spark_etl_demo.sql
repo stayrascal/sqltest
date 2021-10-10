@@ -4,7 +4,7 @@
 CREATE TABLE IF NOT EXISTS ${target_table}
 (
     subject        STRING,
-    student_id     STRING,
+    student_id     INT,
     student_gender STRING,
     student_age    INT,
     score          INT

@@ -4,8 +4,8 @@ import pandas as pd
 from pyspark.sql import DataFrame, SparkSession
 from pyspark.sql.types import *
 
-from sql.runner.runner import SqlRunner
-from sql.tools.dataframe_comparator import assert_frame_equal
+from sqltest.engine.engine import SqlEngine
+from sqltest.tools.dataframe_comparator import assert_frame_equal
 
 
 def pandas_to_spark(pandas_df: pd.DataFrame, spark: SparkSession) -> DataFrame:
@@ -39,25 +39,35 @@ def define_structure(string, format_type):
     return StructField(string, typo)
 
 
-class SparkRunner(SqlRunner):
+class SparkEngine(SqlEngine):
     def __init__(self, spark: SparkSession, env_variables: dict):
         super().__init__(env_variables)
         self._spark = spark
 
-    def _run(self, source_dataset: List[Tuple[str, pd.DataFrame]], target_dataset: List[Tuple[str, pd.DataFrame]],
-             statements: List[str]):
-        self._register_temp_view(source_dataset)
-        self._execute_sql(statements)
-        self._verify_target_dataset(target_dataset)
+    def verify_target_dataset(self):
+        for (table, dataset) in self.target_dataset:
+            result_df = self._query_table(table)
+            assert_frame_equal(result_df, dataset, sort_keys=dataset.columns.values.tolist())
 
-    def _register_temp_view(self, datasets: List[Tuple[str, pd.DataFrame]]):
-        [pandas_to_spark(dataset, self._spark).createOrReplaceTempView(table) for (table, dataset) in datasets]
+    def _execute(self, statements: List[str]):
+        self._register_temp_view(self.source_dataset)
+        self._execute_sql(statements)
 
     def _execute_sql(self, statements: List[str]):
         for stat in statements:
             self._spark.sql(stat)
 
+    def get_target_tables(self) -> List[Tuple[str, pd.DataFrame]]:
+        for (table, dataset) in self.target_dataset:
+            yield table, self._query_table(table)
+
+    def _query_table(self, table):
+        return self._spark.sql(f"SELECT * FROM {table}").toPandas()
+
+    def _register_temp_view(self, datasets: List[Tuple[str, pd.DataFrame]]):
+        [pandas_to_spark(dataset, self._spark).createOrReplaceTempView(table) for (table, dataset) in datasets]
+
     def _verify_target_dataset(self, target_dataset):
         for (table, dataset) in target_dataset:
-            result_df = self._spark.sql(f'SELECT * FROM {table}').toPandas()
+            result_df = self._query_table(table)
             assert_frame_equal(result_df, dataset, sort_keys=dataset.columns.values.tolist())

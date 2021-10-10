@@ -1,5 +1,5 @@
-import numpy as np
 from pandas import DataFrame
+from pandas import testing
 
 
 def assert_frame_equal(left: DataFrame, right: DataFrame, sort_keys=None):
@@ -8,4 +8,5 @@ def assert_frame_equal(left: DataFrame, right: DataFrame, sort_keys=None):
     if len(sort_keys):
         left = left.sort_values(by=sort_keys)
         right = right.sort_values(by=sort_keys)
-    np.array_equal(left, right)
+
+    testing.assert_frame_equal(left, right, check_dtype=False, check_index_type=False)

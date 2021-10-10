@@ -1,6 +1,6 @@
 from typing import List
 
-from sql.parser.strategy import ExecutionEnvironment, ParseStrategy
+from sqltest.parser.strategy import ExecutionEnvironment, ParseStrategy
 
 COMMENT_PREFIX = '--'
 MASK = "--.*$"''
@@ -23,7 +23,7 @@ class SqlFileReader(object):
 
     @staticmethod
     def _read_sql_statements(path: str) -> List[str]:
-        with open(path) as file:
+        with open(path, 'r', encoding='utf8') as file:
             lines = file.readlines()
             buffer = []
             for line in lines:
