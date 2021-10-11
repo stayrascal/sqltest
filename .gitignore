@@ -1,3 +1,9 @@
 .venv
 .idea
-*/data/tables`
+*/data/tables
+.pypirc
+build
+dist
+*.egg-info
+spark-warehouse
+__pycache__
