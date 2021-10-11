@@ -1,3 +1,4 @@
+import re
 from typing import List, Tuple
 
 import pandas as pd
@@ -55,6 +56,7 @@ class SparkEngine(SqlEngine):
 
     def _execute_sql(self, statements: List[str]):
         for stat in statements:
+            stat = self._inline_data_source_table(stat)
             self._spark.sql(stat)
 
     def get_target_tables(self) -> List[Tuple[str, pd.DataFrame]]:
@@ -65,9 +67,28 @@ class SparkEngine(SqlEngine):
         return self._spark.sql(f"SELECT * FROM {table}").toPandas()
 
     def _register_temp_view(self, datasets: List[Tuple[str, pd.DataFrame]]):
-        [pandas_to_spark(dataset, self._spark).createOrReplaceTempView(table) for (table, dataset) in datasets]
+        [pandas_to_spark(dataset, self._spark).createOrReplaceTempView(table.replace(".", "_")) for (table, dataset) in
+         datasets]
 
     def _verify_target_dataset(self, target_dataset):
         for (table, dataset) in target_dataset:
             result_df = self._query_table(table)
             assert_frame_equal(result_df, dataset, sort_keys=dataset.columns.values.tolist())
+
+    def _inline_data_source_table(self, statement):
+        if bool(re.match('(^INSERT|^SELECT)', statement.strip(), re.I)):
+            raw_full_table_names = self._extract_source_tables(statement)
+            for full_table_name in raw_full_table_names:
+                new_table_name = full_table_name.replace(".", "_")
+                statement = statement.replace(full_table_name, new_table_name)
+            return statement
+        else:
+            return statement
+
+    @staticmethod
+    def _extract_source_tables(statement):
+        for table in re.findall("FROM\s+(.*?) ", statement, flags=re.I):
+            yield table
+
+        for table in re.findall('JOIN\s+(.*?)\s+.*\s+ON', statement, flags=re.I):
+            yield table

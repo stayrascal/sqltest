@@ -8,3 +8,6 @@ clean-pyc:
 	find . -name '.pytest_cache' -exec rm -fr {} +
 	find . -name '__pycache__' -exec rm -fr {} +
 	find . -name '.cache' -exec rm -fr {} +
+
+deploy-test-pypi:
+	twine upload -r sqltest dist/*
