@@ -56,6 +56,7 @@ class SparkEngine(SqlEngine):
 
     def _execute_sql(self, statements: List[str]):
         for stat in statements:
+            self._create_database_if_not_exist(stat)
             stat = self._inline_data_source_table(stat)
             self._spark.sql(stat)
 
@@ -92,3 +93,7 @@ class SparkEngine(SqlEngine):
 
         for table in re.findall('JOIN\s+(.*?)\s+.*\s+ON', statement, flags=re.I):
             yield table
+
+    def _create_database_if_not_exist(self, statement):
+        for db in re.findall("^CREATE\s+[TABLE|IF NOT EXISTS]+\s+(.*?)\.", statement.strip(), flags=re.I):
+            self._spark.sql(f"CREATE DATABASE IF NOT EXISTS {db}")
