@@ -6,8 +6,8 @@ from sqltest.datasource.reader import DatasetReader
 
 
 class ExcelDatasetReader(DatasetReader):
-    def __init__(self, data_path: str):
-        self._data_file = pd.ExcelFile(data_path)
+    def __init__(self, data_path: str, engine="openpyxl"):
+        self._data_file = pd.ExcelFile(data_path, engine=engine)
         self.source_sheets = [source for source in self._data_file.sheet_names if
                               source.startswith('source--')]
         self.target_sheets = [source for source in self._data_file.sheet_names if

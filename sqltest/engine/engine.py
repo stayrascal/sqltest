@@ -30,3 +30,6 @@ class SqlEngine(object):
 
     def verify_target_dataset(self):
         raise NotImplementedError("This method is not implemented.")
+
+    def query_table(self, table_name: str):
+        raise NotImplementedError("This method is not implemented.")

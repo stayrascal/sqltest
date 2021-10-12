@@ -50,8 +50,15 @@ class SparkEngine(SqlEngine):
 
     def verify_target_dataset(self):
         for (table, dataset) in self.target_dataset:
-            result_df = self._query_table(table)
+            result_df = self.query_table(table)
             assert_frame_equal(result_df, dataset, sort_keys=dataset.columns.values.tolist())
+
+    def get_target_tables(self) -> List[Tuple[str, pd.DataFrame]]:
+        for (table, dataset) in self.target_dataset:
+            yield table, self.query_table(table)
+
+    def query_table(self, table_name: str):
+        return self._spark.sql(f"SELECT * FROM {table_name}").toPandas()
 
     def _execute(self, statements: List[str]):
         self._register_temp_view(self.source_dataset)
@@ -63,30 +70,22 @@ class SparkEngine(SqlEngine):
             stat = self._inline_data_source_table(stat)
             self._spark.sql(stat)
 
-    def get_target_tables(self) -> List[Tuple[str, pd.DataFrame]]:
-        for (table, dataset) in self.target_dataset:
-            yield table, self._query_table(table)
-
-    def _query_table(self, table):
-        return self._spark.sql(f"SELECT * FROM {table}").toPandas()
-
     def _register_temp_view(self, datasets: List[Tuple[str, pd.DataFrame]]):
         for (table, dataset) in datasets:
             pandas_to_spark(dataset, self._spark).createOrReplaceTempView(table.replace(".", "_"))
             LOG.info(f'Register temporary view {table.replace(".", "_")}')
 
-    def _verify_target_dataset(self, target_dataset):
-        for (table, dataset) in target_dataset:
-            result_df = self._query_table(table)
-            assert_frame_equal(result_df, dataset, sort_keys=dataset.columns.values.tolist())
-
     def _inline_data_source_table(self, statement):
         if bool(re.match('(^INSERT|^SELECT)', statement.strip(), re.I)):
             raw_full_table_names = self._extract_source_tables(statement)
             for full_table_name in raw_full_table_names:
+                LOG.debug("raw statement:")
+                LOG.debug(statement)
                 new_table_name = full_table_name.replace(".", "_")
                 statement = statement.replace(full_table_name, new_table_name)
                 LOG.info(f"Replace table full name from {full_table_name} to {new_table_name}")
+                LOG.debug("target statement:")
+                LOG.debug(statement)
             return statement
         else:
             return statement
@@ -103,11 +102,3 @@ class SparkEngine(SqlEngine):
         for db in re.findall("^CREATE\s+[TABLE|IF NOT EXISTS]+\s+(.*?)\.", statement.strip(), flags=re.I):
             self._spark.sql(f"CREATE DATABASE IF NOT EXISTS {db}")
             LOG.info(f"Try to create database: {db}")
-
-# if __name__ == '__main__':
-#     print(re.findall("FROM\s+(.*?)\)?\s+", "FROM dw_dwd_dev.subject_scores) ", flags=re.I))
-#     print(re.findall("FROM\s+(.*?)\)?\s+", "FROM dw_dwd_dev.subject_scores  test", flags=re.I))
-#     print(re.findall("FROM\s+(.*?)\)?\s+", "FROM dw_dwd_dev.subject_scores test", flags=re.I))
-#     print(re.findall("FROM\s+(.*?)\)?\s+", "FROM dw_dwd_dev.subject_scores test", flags=re.I))
-#     print(re.findall("FROM\s+(.*?)\)?\s*", "FROM dw_dwd_dev.subject_scores", flags=re.I))
-#     print(re.findall("FROM\s+(.*?)\)?\s+", "FROM dw_dwd_dev.subject_scores ", flags=re.I))
