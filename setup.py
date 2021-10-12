@@ -5,7 +5,7 @@ if __name__ == '__main__':
         long_description = fh.read()
 
     setup(name="sqltest",
-          version="0.0.1",
+          version="0.0.2",
           author="stayrascal",
           author_email="stayrascal@gmail.com",
           description="sqltest: easy testing ETL SQLs",

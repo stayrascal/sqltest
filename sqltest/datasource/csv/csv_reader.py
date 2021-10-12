@@ -25,12 +25,3 @@ class CsvDatasetReader(DatasetReader):
         csv_files = [f for f in listdir(path) if isfile(join(path, f)) and f.endswith('.csv')]
         for f in csv_files:
             yield f.split('.csv')[0], pd.read_csv(join(path, f))
-        # return [(f.split('.csv')[0], pd.read_csv(join(path, f))) for f in csv_files]
-
-
-if __name__ == '__main__':
-    reader = CsvDatasetReader(
-        data_path='/Users/wuzhiping/workspace/tools/sql-tester/tests/data/cases/spark_etl_sql_test_demo')
-    for t, df in reader.read_source_data():
-        print(f"table: {t}")
-        print(df.head())
