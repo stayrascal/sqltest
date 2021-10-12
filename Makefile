@@ -9,5 +9,10 @@ clean-pyc:
 	find . -name '__pycache__' -exec rm -fr {} +
 	find . -name '.cache' -exec rm -fr {} +
 
+build-wheel: clean-pyc
+	rm -rf dist
+	rm -rf build
+	python setup.py sdist bdist_wheel
+
 deploy-test-pypi:
 	twine upload -r sqltest dist/*

@@ -1,5 +1,4 @@
-from pandas import DataFrame
-from pandas import testing
+from pandas import DataFrame, testing
 
 
 def assert_frame_equal(left: DataFrame, right: DataFrame, sort_keys=None):
