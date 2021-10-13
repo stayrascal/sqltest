@@ -13,9 +13,9 @@ class TestCsvDataSource(TestCase):
             "target_data_path": f"{PROJECT_PATH}/tests/data/tables",
         }
         reader = CsvDatasetReader(
-            data_path=f"{PROJECT_PATH}/tests/data/cases/spark_etl_sql_test_demo"
+            data_path=f"{PROJECT_PATH}/tests/data/cases/spark_etl_sql_test_csv_demo"
         )
-        sql_file_path = f"{PROJECT_PATH}/tests/data/cases/spark_etl_sql_test_demo/spark_etl_demo.sql"
+        sql_file_path = f"{PROJECT_PATH}/tests/data/cases/spark_etl_sql_test_csv_demo/spark_etl_demo.sql"
 
         engine = SparkEngine(SPARK, environments)
         engine.run(reader, sql_file_path)
