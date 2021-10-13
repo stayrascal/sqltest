@@ -1,9 +1,10 @@
 from typing import List
 
-from sqltest.parser.strategy import ExecutionEnvironment, ParseStrategy
+from sqltest.parser.strategy import ExecutionEnvironment
+from sqltest.parser.strategy import ParseStrategy
 
-COMMENT_PREFIX = '--'
-MASK = "--.*$"''
+COMMENT_PREFIX = "--"
+MASK = "--.*$" ""
 BEGINNING_MASK = "^(\\s)*--.*$"
 
 
@@ -19,11 +20,10 @@ def normalize(buffer: List[str]):
     return "\n".join([line.replace(BEGINNING_MASK, "") for line in buffer])
 
 
-class SqlFileReader(object):
-
+class SqlFileReader:
     @staticmethod
     def _read_sql_statements(path: str) -> List[str]:
-        with open(path, 'r', encoding='utf8') as file:
+        with open(path, encoding="utf8") as file:
             lines = file.readlines()
             buffer = []
             for line in lines:
@@ -38,7 +38,9 @@ class SqlFileReader(object):
             if len(buffer):
                 yield normalize(buffer)
 
-    def compile_sql_file(self, path: str, env: ExecutionEnvironment, strategies: List[ParseStrategy]) -> List[str]:
+    def compile_sql_file(
+        self, path: str, env: ExecutionEnvironment, strategies: List[ParseStrategy]
+    ) -> List[str]:
         statements = self._read_sql_statements(path)
         for statement in statements:
             for strategy in strategies:

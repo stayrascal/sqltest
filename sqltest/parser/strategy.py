@@ -1,12 +1,14 @@
-from abc import ABC
 import re
+from abc import ABC
 from typing import List
 
 from sqltest.parser.exceptions import VariableNotFound
-from sqltest.parser.operation import NothingOperation, Operation, RunnableOperation
+from sqltest.parser.operation import NothingOperation
+from sqltest.parser.operation import Operation
+from sqltest.parser.operation import RunnableOperation
 
 
-class ExecutionEnvironment(object):
+class ExecutionEnvironment:
     def __init__(self, env: dict):
         self._env = env
 
@@ -23,7 +25,7 @@ class ExecutionEnvironment(object):
         self._env[key] = val
 
 
-class ParseStrategy(object):
+class ParseStrategy:
     def match(self, statement: str) -> bool:
         raise NotImplementedError("this method is not implemented.")
 
@@ -43,9 +45,9 @@ class AbstractRegexParseStrategy(ParseStrategy, ABC):
 
     @staticmethod
     def overwrite_variables(statement: str, context: ExecutionEnvironment) -> str:
-        for var in re.findall("\${(\w*)}", statement):
+        for var in re.findall(r"\${(\w*)}", statement):
             val = context.get_variable_val(var)
-            statement = statement.replace(f'${{{var}}}', val)
+            statement = statement.replace(f"${{{var}}}", val)
         return statement
 
 

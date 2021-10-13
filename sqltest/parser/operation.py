@@ -1,4 +1,4 @@
-class Operation(object):
+class Operation:
     def as_summary_str(self) -> str:
         raise NotImplementedError("this method is not implemented.")
 

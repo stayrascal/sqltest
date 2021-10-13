@@ -1,6 +1,8 @@
 from os import listdir
-from os.path import isfile, join
-from typing import List, Tuple
+from os.path import isfile
+from os.path import join
+from typing import List
+from typing import Tuple
 
 import pandas as pd
 
@@ -8,7 +10,6 @@ from sqltest.datasource.reader import DatasetReader
 
 
 class CsvDatasetReader(DatasetReader):
-
     def __init__(self, data_path: str, source_key="source", target_key="target"):
         self._data_path = data_path
         self._source_key = source_key
@@ -22,6 +23,8 @@ class CsvDatasetReader(DatasetReader):
 
     @staticmethod
     def _read_csv(path: str) -> List[Tuple[str, pd.DataFrame]]:
-        csv_files = [f for f in listdir(path) if isfile(join(path, f)) and f.endswith('.csv')]
+        csv_files = [
+            f for f in listdir(path) if isfile(join(path, f)) and f.endswith(".csv")
+        ]
         for f in csv_files:
-            yield f.split('.csv')[0], pd.read_csv(join(path, f))
+            yield f.split(".csv")[0], pd.read_csv(join(path, f))

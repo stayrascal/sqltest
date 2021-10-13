@@ -4,7 +4,9 @@ from sqltest.datasource.reader import DatasetReader
 from sqltest.engine import SparkEngine
 
 
-def spark_engine(spark: SparkSession, sql_path: str, reader: DatasetReader = None, env: dict = None):
+def spark_engine(
+    spark: SparkSession, sql_path: str, reader: DatasetReader = None, env: dict = None
+):
     def wrapper(func):
         def decorate(*args):
             engine = SparkEngine(spark, env)
