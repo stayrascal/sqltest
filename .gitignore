@@ -7,3 +7,4 @@ dist
 *.egg-info
 spark-warehouse
 __pycache__
+.DS_Store

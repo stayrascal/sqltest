@@ -16,3 +16,6 @@ build-wheel: clean-pyc
 
 deploy-test-pypi:
 	twine upload -r sqltest dist/*
+
+pre-commit:
+	pre-commit run --all-files
