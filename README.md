@@ -1,6 +1,10 @@
 # sqltest
+------
+.. image:: https://codecov.io/gh/stayrascal/sqltest/branch/main/graph/badge.svg
+    :target: https://codecov.io/gh/stayrascal/sqltest
+    :alt: Code coverage Status
 
-The `sqltest` framework makes it easy to write test cases for testing complicated ETL processing logic.
+The ``sqltest`` framework makes it easy to write test cases for testing complicated ETL processing logic.
 What you need to do is prepare your source & target dataset with CSV format or Excel format, and also prepare your ETL SQLs.
 
 ## Installing
