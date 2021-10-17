@@ -20,7 +20,6 @@ jobs:
       matrix:
         name: [
             "windows-py37",
-            "windows-py37-pluggy",
             "windows-py38",
             "windows-py39",
             "windows-py310",
@@ -42,41 +41,37 @@ jobs:
           - name: "windows-py37"
             python: "3.7"
             os: windows-latest
-            tox_env: "py37-numpy"
-          - name: "windows-py37-pluggy"
-            python: "3.7"
-            os: windows-latest
-            tox_env: "py37-pluggymain-xdist"
+            tox_env: "py37"
           - name: "windows-py38"
             python: "3.8"
             os: windows-latest
-            tox_env: "py38-unittestextras"
+            tox_env: "py38"
             use_coverage: true
           - name: "windows-py39"
             python: "3.9"
             os: windows-latest
-            tox_env: "py39-xdist"
+            tox_env: "py39"
           - name: "windows-py310"
             python: "3.10-dev"
             os: windows-latest
-            tox_env: "py310-xdist"
+            tox_env: "py310"
 
-          - name: "ubuntu-py37-pluggy"
+          - name: "ubuntu-py37"
             python: "3.7"
             os: ubuntu-latest
-            tox_env: "py37-pluggymain-xdist"
+            tox_env: "py37"
           - name: "ubuntu-py38"
             python: "3.8"
             os: ubuntu-latest
-            tox_env: "py38-xdist"
+            tox_env: "py38"
           - name: "ubuntu-py39"
             python: "3.9"
             os: ubuntu-latest
-            tox_env: "py39-xdist"
+            tox_env: "py39"
           - name: "ubuntu-py310"
             python: "3.10-dev"
             os: ubuntu-latest
-            tox_env: "py310-xdist"
+            tox_env: "py310"
           - name: "ubuntu-pypy3"
             python: "pypy-3.7"
             os: ubuntu-latest
@@ -85,11 +80,12 @@ jobs:
           - name: "macos-py37"
             python: "3.7"
             os: macos-latest
-            tox_env: "py37-xdist"
+            tox_env: "py37"
+            use_coverage: true
           - name: "macos-py38"
             python: "3.8"
             os: macos-latest
-            tox_env: "py38-xdist"
+            tox_env: "py38"
             use_coverage: true
 
           - name: "docs"
