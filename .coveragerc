@@ -1,0 +1,22 @@
+[run]
+include =
+  sqltest/*
+  tests/*
+parallel = 1
+branch = 1
+
+[paths]
+source = sqltest/
+
+[report]
+skip_covered = True
+show_missing = True
+exclude_lines =
+    \#\s*pragma: no cover
+    ^\s*raise NotImplementedError\b
+    ^\s*return NotImplemented\b
+    ^\s*assert False(,|$)
+    ^\s*assert_never\(
+
+    ^\s*if TYPE_CHECKING:
+    ^\s*@overload( |$)

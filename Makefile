@@ -19,3 +19,6 @@ deploy-test-pypi:
 
 pre-commit:
 	pre-commit run --all-files
+
+run-all-local-test:
+	python -m unittest discover tests
