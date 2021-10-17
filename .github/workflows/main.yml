@@ -25,7 +25,6 @@ jobs:
             "windows-py39",
             "windows-py310",
 
-            "ubuntu-py37",
             "ubuntu-py37-pluggy",
             "ubuntu-py38",
             "ubuntu-py39",
