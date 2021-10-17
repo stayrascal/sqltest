@@ -9,7 +9,9 @@ from sqltest.parser.operation import RunnableOperation
 
 
 class ExecutionEnvironment:
-    def __init__(self, env: dict):
+    def __init__(self, env=None):
+        if env is None:
+            env = {}
         self._env = env
 
     def check_variable(self, var: str) -> str:
@@ -71,8 +73,8 @@ class ExtractConstantStrategy(AbstractRegexParseStrategy):
         statement = self.overwrite_variables(statement, context)
 
         statement = statement.split(self.pattern)[1].strip()
-        const_key = statement.split("=")[0]
-        const_val = statement.split("=")[1]
+        const_key = statement.split("=")[0].strip()
+        const_val = statement.split("=")[1].strip()
         context.set_variable(const_key, const_val)
         return NothingOperation()
 
