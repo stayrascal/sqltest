@@ -75,7 +75,7 @@ jobs:
           - name: "ubuntu-pypy3"
             python: "pypy-3.7"
             os: ubuntu-latest
-            tox_env: "pypy3-xdist"
+            tox_env: "pypy3"
 
           - name: "macos-py37"
             python: "3.7"
