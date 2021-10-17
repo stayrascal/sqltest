@@ -1,8 +1,11 @@
 # sqltest
 ------
-.. image:: https://codecov.io/gh/stayrascal/sqltest/branch/main/graph/badge.svg
-    :target: https://codecov.io/gh/stayrascal/sqltest
-    :alt: Code coverage Status
+[![pypi](https://img.shields.io/pypi/v/sqltest.svg)](https://pypi.org/project/sqltest/)
+[![python](https://img.shields.io/pypi/pyversions/sqltest.svg)](https://pypi.org/project/sqltest/)
+[![codecov](https://codecov.io/gh/stayrascal/sqltest/branch/main/graph/badge.svg)](https://codecov.io/gh/stayrascal/sqltest)
+[![main](https://github.com/stayrascal/sqltest/workflows/main/badge.svg)](https://github.com/stayrascal/sqltest/actions?query=workflow%3Amain)
+[![pre-commit.ci status](https://results.pre-commit.ci/badge/github/stayrascal/sqltest/main.svg)](https://results.pre-commit.ci/latest/github/stayrascal/sqltest/main)
+[![codestyle](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
 The ``sqltest`` framework makes it easy to write test cases for testing complicated ETL processing logic.
 What you need to do is prepare your source & target dataset with CSV format or Excel format, and also prepare your ETL SQLs.
