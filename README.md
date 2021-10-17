@@ -1,5 +1,4 @@
 # sqltest
-------
 [![pypi](https://img.shields.io/pypi/v/sqltest.svg)](https://pypi.org/project/sqltest/)
 [![python](https://img.shields.io/pypi/pyversions/sqltest.svg)](https://pypi.org/project/sqltest/)
 [![codecov](https://codecov.io/gh/stayrascal/sqltest/branch/main/graph/badge.svg)](https://codecov.io/gh/stayrascal/sqltest)
