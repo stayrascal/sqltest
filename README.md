@@ -81,3 +81,9 @@ def test_case(reader: DatasetReader):
 
 ## SQL Engine
 Currently, we only support spark engine, we have plan to support other SQL engine, e.g. Flink.
+
+
+Bugs/Requests
+-------------
+
+Please use the `GitHub issue tracker <https://github.com/stayrascal/sqltest/issues>`_ to submit bugs or request features.
