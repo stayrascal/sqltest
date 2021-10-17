@@ -8,3 +8,7 @@ dist
 spark-warehouse
 __pycache__
 .DS_Store
+.coverage
+.tox
+coverage.xml
+codecov
