@@ -3,7 +3,7 @@ from unittest import TestCase
 from sqltest.datasource import CsvDatasetReader
 from sqltest.engine.spark import SparkEngine
 from tests import PROJECT_PATH
-from tests import SPARK
+from tests.integrations import SPARK
 
 
 class TestCsvDataSource(TestCase):

@@ -7,7 +7,7 @@ from sqltest.engine.spark import SparkEngine
 from sqltest.marker import excel_reader
 from sqltest.marker import spark_engine
 from tests import PROJECT_PATH
-from tests import SPARK
+from tests.integrations import SPARK
 
 
 class TestExcelDataSource(TestCase):

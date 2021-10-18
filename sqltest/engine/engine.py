@@ -12,12 +12,16 @@ from sqltest.parser.strategy import VerifyVariableStrategy
 
 
 class SqlEngine:
-    def __init__(self, env_variables: dict):
-        self._sql_parse_strategies = [
-            ExtractSQLStrategy(),
-            ExtractConstantStrategy(),
-            VerifyVariableStrategy(),
-        ]
+    def __init__(self, env_variables: dict, parse_strategies=None):
+        if parse_strategies is None:
+            self._sql_parse_strategies = [
+                ExtractSQLStrategy(),
+                ExtractConstantStrategy(),
+                VerifyVariableStrategy(),
+            ]
+        else:
+            self.parse_strategies = parse_strategies
+
         self._execution_env = ExecutionEnvironment(env_variables)
 
     def run(self, dataset_reader: DatasetReader, sql_file_path: str):
