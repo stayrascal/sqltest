@@ -1,6 +1,18 @@
 # reference: https://docs.codecov.io/docs/codecovyml-reference
+codecov:
+  branch: master
+  notify:
+    after_n_builds: 10
+comment: false
+
 coverage:
   status:
-    patch: true
-    project: false
-comment: false
+    project:
+      default:
+        target: '82'
+    patch:
+      default:
+        target: '50'
+
+github_checks:
+    annotations: false
