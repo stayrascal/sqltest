@@ -97,4 +97,4 @@ Currently, we only support spark engine, we have plan to support other SQL engin
 Bugs/Requests
 -------------
 
-Please use the `GitHub issue tracker <https://github.com/stayrascal/sqltest/issues>`_ to submit bugs or request features.
+Please use the [GitHub issue tracker](https://github.com/stayrascal/sqltest/issues) to submit bugs or request features.
