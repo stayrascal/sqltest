@@ -17,7 +17,7 @@ from pyspark.sql.types import TimestampType
 from sqltest.engine.engine import SqlEngine
 from sqltest.tools.dataframe_comparator import assert_frame_equal
 
-LOG = logging.getLogger(__name__)
+LOG = logging.getLogger("spark_engine")
 
 
 def pandas_to_spark(pandas_df: pd.DataFrame, spark: SparkSession) -> DataFrame:
@@ -55,6 +55,7 @@ class SparkEngine(SqlEngine):
     def __init__(self, spark: SparkSession, env_variables: dict):
         super().__init__(env_variables)
         self._spark = spark
+        self._new_tables = []
 
     def verify_target_dataset(self):
         for (table, dataset) in self.target_dataset:
@@ -91,15 +92,14 @@ class SparkEngine(SqlEngine):
         if bool(re.match("(^INSERT|^SELECT)", statement.strip(), re.I)):
             raw_full_table_names = self._extract_source_tables(statement)
             for full_table_name in raw_full_table_names:
-                LOG.debug("raw statement:")
-                LOG.debug(statement)
-                new_table_name = full_table_name.replace(".", "_")
-                statement = statement.replace(full_table_name, new_table_name)
-                LOG.info(
-                    f"Replace table full name from {full_table_name} to {new_table_name}"
-                )
-                LOG.debug("target statement:")
-                LOG.debug(statement)
+                if full_table_name not in self._new_tables:
+                    LOG.debug(f"raw statement:\n{statement}")
+                    new_table_name = full_table_name.replace(".", "_")
+                    statement = statement.replace(full_table_name, new_table_name)
+                    LOG.info(
+                        f"Replace table full name from {full_table_name} to {new_table_name}"
+                    )
+                    LOG.debug(f"target statement:\n{statement}")
             return statement
         else:
             return statement
@@ -111,8 +111,14 @@ class SparkEngine(SqlEngine):
         yield from re.findall(r"JOIN\s+(.*?)\s+.*\s+ON", statement, flags=re.I)
 
     def _create_database_if_not_exist(self, statement):
-        for db in re.findall(
-            r"^CREATE\s+[TABLE|IF NOT EXISTS]+\s+(.*?)\.", statement.strip(), flags=re.I
+        for table in re.findall(
+            r"^CREATE\s+[TABLE|TABLE\s+IF\s+NOT\s+EXISTS]+\s+(.*?)\s",
+            statement.strip(),
+            flags=re.I,
         ):
-            self._spark.sql(f"CREATE DATABASE IF NOT EXISTS {db}")
-            LOG.info(f"Try to create database: {db}")
+            if len(table.split(".")) > 1:
+                self._new_tables.append(table)
+
+                db = table.split(".")[0]
+                self._spark.sql(f"CREATE DATABASE IF NOT EXISTS {db}")
+                LOG.info(f"Try to create database: {db}")
