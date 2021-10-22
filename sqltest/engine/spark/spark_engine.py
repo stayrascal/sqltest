@@ -6,6 +6,9 @@ from typing import Tuple
 import pandas as pd
 from pyspark.sql import DataFrame
 from pyspark.sql import SparkSession
+from pyspark.sql.functions import col
+from pyspark.sql.types import DecimalType
+from pyspark.sql.types import DoubleType
 from pyspark.sql.types import FloatType
 from pyspark.sql.types import IntegerType
 from pyspark.sql.types import LongType
@@ -69,7 +72,11 @@ class SparkEngine(SqlEngine):
             yield table, self.query_table(table)
 
     def query_table(self, table_name: str):
-        return self._spark.sql(f"SELECT * FROM {table_name}").toPandas()
+        df = self._spark.sql(f"SELECT * FROM {table_name}")
+        for field in df.schema.fields:
+            if isinstance(field.dataType, DecimalType):
+                df = df.withColumn(field.name, col(field.name).cast(DoubleType()))
+        return df.toPandas()
 
     def _execute(self, statements: List[str]):
         self._register_temp_view(self.source_dataset)
