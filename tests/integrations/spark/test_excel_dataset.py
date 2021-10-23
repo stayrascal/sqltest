@@ -2,8 +2,8 @@ from unittest import TestCase
 
 from sqltest.datasource.excel import ExcelDatasetReader
 from sqltest.datasource.reader import DatasetReader
+from sqltest.engine import SparkEngine
 from sqltest.engine.engine import SqlEngine
-from sqltest.engine.spark import SparkEngine
 from sqltest.marker import excel_reader
 from sqltest.marker import spark_engine
 from tests import PROJECT_PATH
