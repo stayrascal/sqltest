@@ -13,8 +13,8 @@ def assert_frame_equal(left: pd.DataFrame, right: pd.DataFrame, sort_keys=None):
         left = left.sort_values(by=sort_keys).reset_index(drop=True)
         right = right.sort_values(by=sort_keys).reset_index(drop=True)
 
-    LOG.info(f"Query Result: {left.dtypes} \n{left.head()}")
-    LOG.info(f"Target Result:{right.dtypes} \n{right.head()}")
+    LOG.debug(f"Query Result: {left.dtypes} \n{left.head()}")
+    LOG.debug(f"Target Result:{right.dtypes} \n{right.head()}")
     pd.testing.assert_frame_equal(
         left,
         right,
