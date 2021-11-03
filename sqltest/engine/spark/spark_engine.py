@@ -96,20 +96,17 @@ class SparkEngine(SqlEngine):
             LOG.info(f'Register temporary view {table.replace(".", "_")}')
 
     def _inline_data_source_table(self, statement):
-        if bool(re.match("(^INSERT|^SELECT)", statement.strip(), re.I)):
-            raw_full_table_names = self._extract_source_tables(statement)
-            for full_table_name in raw_full_table_names:
-                if full_table_name not in self._new_tables:
-                    LOG.debug(f"raw statement:\n{statement}")
-                    new_table_name = full_table_name.replace(".", "_")
-                    statement = statement.replace(full_table_name, new_table_name)
-                    LOG.info(
-                        f"Replace table full name from {full_table_name} to {new_table_name}"
-                    )
-                    LOG.debug(f"target statement:\n{statement}")
-            return statement
-        else:
-            return statement
+        raw_full_table_names = self._extract_source_tables(statement)
+        for full_table_name in raw_full_table_names:
+            if full_table_name not in self._new_tables:
+                LOG.debug(f"raw statement:\n{statement}")
+                new_table_name = full_table_name.replace(".", "_")
+                statement = statement.replace(full_table_name, new_table_name)
+                LOG.info(
+                    f"Replace table full name from {full_table_name} to {new_table_name}"
+                )
+                LOG.debug(f"target statement:\n{statement}")
+        return statement
 
     @staticmethod
     def _extract_source_tables(statement):
