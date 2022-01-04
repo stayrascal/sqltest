@@ -47,3 +47,14 @@ class TestExcelDataSource(TestCase):
     )
     def test_excel_with_engine_decorate(self, engine: SqlEngine):
         engine.verify_target_dataset()
+
+    @spark_engine(
+        spark=SPARK,
+        sql_path=f"{PROJECT_PATH}/tests/data/cases/spark_deuplicate_excel_demo/demo.sql",
+        reader=ExcelDatasetReader(
+            f"{PROJECT_PATH}/tests/data/cases/spark_deuplicate_excel_demo/spark_etl_demo.xlsx"
+        ),
+        env={"env": "dev", "target_data_path": f"{PROJECT_PATH}/tests/data/tables"},
+    )
+    def test_duplicated_case_excel(self, engine: SqlEngine):
+        engine.verify_target_dataset()

@@ -85,18 +85,21 @@ class SparkEngine(SqlEngine):
     def _execute_sql(self, statements: List[str]):
         for stat in statements:
             self._create_database_if_not_exist(stat)
-            stat = self._inline_data_source_table(stat)
+            stat, new_tables = self._inline_data_source_table(stat)
+            self._prepare_data_if_need(new_tables)
             self._spark.sql(stat)
 
     def _register_temp_view(self, datasets: List[Tuple[str, pd.DataFrame]]):
         for (table, dataset) in datasets:
+            temp_table_name = table.replace(".", "_")
             pandas_to_spark(dataset, self._spark).createOrReplaceTempView(
-                table.replace(".", "_")
+                temp_table_name
             )
-            LOG.info(f'Register temporary view {table.replace(".", "_")}')
+            LOG.info(f"Register temporary view {temp_table_name}")
 
     def _inline_data_source_table(self, statement):
         raw_full_table_names = self._extract_source_tables(statement)
+        new_tables = []
         for full_table_name in raw_full_table_names:
             if full_table_name not in self._new_tables:
                 LOG.debug(f"raw statement:\n{statement}")
@@ -106,7 +109,9 @@ class SparkEngine(SqlEngine):
                     f"Replace table full name from {full_table_name} to {new_table_name}"
                 )
                 LOG.debug(f"target statement:\n{statement}")
-        return statement
+            else:
+                new_tables.append(full_table_name)
+        return statement, new_tables
 
     @staticmethod
     def _extract_source_tables(statement):
@@ -126,3 +131,14 @@ class SparkEngine(SqlEngine):
                 db = table.split(".")[0]
                 self._spark.sql(f"CREATE DATABASE IF NOT EXISTS {db}")
                 LOG.info(f"Try to create database: {db}")
+
+    def _prepare_data_if_need(self, new_tables):
+        for (table, _) in self.source_dataset:
+            if table in new_tables:
+                temp_table_name = table.replace(".", "_")
+                LOG.info(
+                    f"Target table {table} exists in source table, will insert data at first."
+                )
+                self._spark.sql(
+                    f"INSERT OVERWRITE {table} SELECT * FROM {temp_table_name}"
+                )

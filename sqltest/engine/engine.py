@@ -25,8 +25,12 @@ class SqlEngine:
         self._execution_env = ExecutionEnvironment(env_variables)
 
     def run(self, dataset_reader: DatasetReader, sql_file_path: str):
-        self.source_dataset = dataset_reader.read_source_data()
-        self.target_dataset = dataset_reader.read_target_data()
+        self.source_dataset: List[Tuple[str, pd.DataFrame]] = list(
+            dataset_reader.read_source_data()
+        )
+        self.target_dataset: List[Tuple[str, pd.DataFrame]] = list(
+            dataset_reader.read_target_data()
+        )
         statements = SqlFileReader().compile_sql_file(
             sql_file_path, self._execution_env, self._sql_parse_strategies
         )
